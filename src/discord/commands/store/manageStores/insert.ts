@@ -75,8 +75,8 @@ commad.subcommand({
 
         const row = createRow(
             new StringSelectMenuBuilder({
-                customId: "/select/fruits",
-                placeholder: "Select fruits",
+                customId: `/store/${idloja}`,
+                placeholder: "SELECIONE SEU ITEM AKI!",
                 options: itens
             })
         );
@@ -99,9 +99,10 @@ commad.subcommand({
 
             await sendcanal.send(constructor.azoxo(
                 `# ${constants.emojis.store} Loja \`${isStore[0].title}\``,
-                `> ${isStore[0].des}`,
+                `## ${isStore[0].des}`,
                 await createMediaGallery(isStore[0].img),
-                `**${constants.emojis.folder} Selecione algum item abaixo:**`,
+                `## **${constants.emojis.folder} Selecione algum item da loja \`${isStore[0].title}\` abaixo:**`,
+                `-# ${constants.emojis.info} Após selecionado será criado um carrinho!`,
                 row,
                 `-# ${constants.emojis.ok} Gerenciamento Lojas`
             ));

@@ -15,11 +15,15 @@
   "dependencies": {
     "@magicyan/discord": "1.5.2",
     "@reliverse/reglob": "1.0.0",
+    "@types/mercadopago": "^1.5.11",
+    "axios": "^1.6.0",
     "chalk": "5.5.0",
     "discord.js": "14.22.1",
+    "jimp": "^1.6.0",
+    "mercadopago": "^2.9.0",
+    "mongoose": "8.3.1",
     "rou3": "0.7.3",
-    "zod": "4.0.17",
-    "mongoose": "8.3.1"
+    "zod": "4.0.17"
   },
   "devDependencies": {
     "@types/node": "22.16.4",
