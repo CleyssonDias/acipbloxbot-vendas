@@ -32,6 +32,12 @@ groupItens.subcommand({
             required: true,
         },
         {
+            name: "emoji",
+            description: "🏪 emoji do item",
+            type: ApplicationCommandOptionType.String,
+            required: true,
+        },
+        {
             name: "value",
             description: "🏪 Valor do item",
             type: ApplicationCommandOptionType.Number,
@@ -56,8 +62,8 @@ groupItens.subcommand({
         const description = options.getString("description");
         const value = options.getNumber("value");
         const estoque = options.getNumber("stock");
-
-        if (!idloja || !iditem || !title || !description || !value || !estoque) return;
+        const emoji = options.getString("emoji");
+        if (!idloja || !iditem || !title || !description || !value || !estoque || !emoji) return;
 
         const loja = await db.store.find({
             nameid: idloja
@@ -94,6 +100,7 @@ groupItens.subcommand({
             return
         }
 
+
         await db.store.updateOne({ nameid: idloja },
             {
                 $push: {
@@ -102,7 +109,8 @@ groupItens.subcommand({
                         title,
                         value,
                         des: description,
-                        stock: estoque
+                        stock: estoque,
+                        emoji
                     }
                 }
             })

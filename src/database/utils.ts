@@ -13,6 +13,7 @@ export const t = Object.assign(p, {
     title: p.string,
     value: p.number,
     des: p.string,
+    emoji: p.string,
     stock: p.number
 })
 });

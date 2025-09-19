@@ -24,6 +24,12 @@ commad.subcommand({
             description: "🏪 Descrição da loja",
             type: ApplicationCommandOptionType.String,
             required: true,
+        },
+        {
+            name: "foto",
+            description: "🏪 Foto da loja",
+            type: ApplicationCommandOptionType.String,
+            required: true,
         }
     ],
     async run(interaction) {
@@ -33,8 +39,8 @@ commad.subcommand({
         const id = options.getString("id");
         const title = options.getString("title");
         const description = options.getString("description");
-
-        if (!id || !title || !description) return;
+        const foto = options.getString("foto");
+        if (!id || !title || !description || !foto) return;
 
         const isStore = await db.store.find({
             nameid: id
@@ -44,7 +50,8 @@ commad.subcommand({
             await db.store.create({
                 nameid: id,
                 title,
-                des: description
+                des: description,
+                img: foto
             })
 
             let res = createEmbed({

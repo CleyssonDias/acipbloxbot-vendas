@@ -1,6 +1,8 @@
 import { db } from "#database";
-import { createEmbed, createRow } from "@magicyan/discord";
+import { createEmbed, createMediaGallery, createRow } from "@magicyan/discord";
 import { ApplicationCommandOptionType, StringSelectMenuBuilder } from "discord.js";
+import { constructor } from "functions/constructor.js";
+import parseEmoji from "functions/parseEmoji.js";
 import commad from "../commad.js";
 
 commad.subcommand({
@@ -10,10 +12,12 @@ commad.subcommand({
         name: "idloja",
         description: "🏪 Nome unico da loja",
         type: ApplicationCommandOptionType.String,
+        required: true
     }, {
         name: "canal",
         description: "🏪 Canal onde a loja sera colocada",
         type: ApplicationCommandOptionType.Channel,
+        required: true
     }],
     async run(interaction) {
         const { options } = interaction;
@@ -62,9 +66,10 @@ commad.subcommand({
 
         isStore[0].itens.map(x => {
             itens.push({
-                emoji: `${constants.emojis.paper}`,
-                label: `${x.name} | ${x.value}`,
-                value: `${x.des} | ${x.stock}`,
+                emoji: x.emoji ? parseEmoji(x.emoji) : parseEmoji(constants.emojis.paper),
+                label: `${x.title} | R$${x.value}`,
+                value: `${x.name}`,
+                description: `${x.des} | Estoque: ${x.stock === -1 ? '∞' : x.stock}`
             })
         })
 
@@ -86,23 +91,21 @@ commad.subcommand({
                 iconURL: interaction.client.user.displayAvatarURL()
             }
         })
+
         res.edit({ embeds: [emd] })
-
-
-        emd = createEmbed({
-            title: `🏪 Loja \`${isStore[0].nameid}\`:`,
-            description: `${isStore[0].des}`,
-            color: constants.colors.azoxo,
-            timestamp: new Date(),
-            footer: {
-                text: `Loja`,
-                iconURL: interaction.client.user.displayAvatarURL()
-            }
-        })  
 
         const sendcanal = interaction.guild.channels.cache.get(canal.id);
         if (sendcanal && sendcanal.isTextBased && sendcanal.isTextBased()) {
-            sendcanal.send({ embeds: [emd], components: [row] });
+
+            await sendcanal.send(constructor.azoxo(
+                `# ${constants.emojis.store} Loja \`${isStore[0].title}\``,
+                `> ${isStore[0].des}`,
+                await createMediaGallery(isStore[0].img),
+                `**${constants.emojis.folder} Selecione algum item abaixo:**`,
+                row,
+                `-# ${constants.emojis.ok} Gerenciamento Lojas`
+            ));
+
         } else {
             let emdError = createEmbed({
                 description: `**${constants.emojis.cancel} O canal selecionado não é um canal de texto!**`,
@@ -115,7 +118,7 @@ commad.subcommand({
             });
             res.edit({ embeds: [emdError] });
         }
-       
+
 
 
     }

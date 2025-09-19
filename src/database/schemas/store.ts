@@ -6,6 +6,7 @@ export const storeSchema = new Schema(
         nameid: t.string,
         title: t.string,
         des: t.string,
+        img: t.string,
         itens: [t.itens]
     }
 );
