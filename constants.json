@@ -33,11 +33,14 @@
   },
   "categorys":{
     "serverOne":{
-      "cartCategory":"1409030348213452941"
+      "cartCategory":"1409030348213452941",
+      "entregaCategory":"1409030348213452941"
     },
     "serverTwo":{
-      "id":"1409030346988851243",
-      "cartCategory":"1409030348213452945"
+      "id":"1404900143534444616",
+      "entregaCategory":"1404900982726594570",
+      "finalizadosCategory":"1404900144217849978",
+      "ausentecategory":"1404900715675127868"
     }
   }
 }

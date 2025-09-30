@@ -81,7 +81,7 @@ createResponder({
 
             }),
             new ButtonBuilder({
-                customId: `/store/pix/${canal.id}/${item.value}`,
+                customId: `/store/pix/${canal.id}/${item.value}/${item.title}`,
                 label: "Realizar Pix",
                 style: ButtonStyle.Success,
                 emoji: (() => {

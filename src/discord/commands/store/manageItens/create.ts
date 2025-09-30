@@ -39,8 +39,8 @@ groupItens.subcommand({
         },
         {
             name: "value",
-            description: "🏪 Valor do item",
-            type: ApplicationCommandOptionType.Number,
+            description: "🏪 Valor do item (aceita vírgula ou ponto, ex: 1,00 ou 1.00)",
+            type: ApplicationCommandOptionType.String,
             required: true,
         },
         {
@@ -48,6 +48,7 @@ groupItens.subcommand({
             description: "🏪 Estoque inicial do item",
             type: ApplicationCommandOptionType.Number,
             required: true,
+            minValue: 0,
         },
     ],
     async run(interaction) {
@@ -60,10 +61,48 @@ groupItens.subcommand({
         const iditem = options.getString("iddoitem");
         const title = options.getString("title");
         const description = options.getString("description");
-        const value = options.getNumber("value");
-        const estoque = options.getNumber("stock");
+    const valueRaw = options.getString("value");
+    const estoque = options.getNumber("stock");
+    // permitir vírgula como separador e formatos com símbolo ou milhares
+    let value: number | undefined = undefined;
+    if (typeof valueRaw === 'string') {
+        // limpar: remover R$, espaços, e pontos de milhares, manter vírgula e ponto para decimal
+        const cleaned = valueRaw.replace(/\s/g, '').replace(/R\$/gi, '').replace(/\./g, '').replace(/,/g, '.');
+        const parsed = Number(cleaned);
+        if (!isNaN(parsed)) {
+            value = Math.round(parsed * 100) / 100;
+        }
+    }
         const emoji = options.getString("emoji");
-        if (!idloja || !iditem || !title || !description || !value || !estoque || !emoji) return;
+        // validar campos obrigatórios (valor pode ser 0.01+)
+        if (!idloja || !iditem || !title || !description || value === undefined || estoque === undefined || !emoji) {
+            let emd = createEmbed({
+                description: `**${constants.emojis.cancel} Parâmetros inválidos. Verifique os campos e tente novamente.**`,
+                color: constants.colors.danger,
+                timestamp: new Date(),
+                footer: {
+                    text: `Gerenciamento Lojas`,
+                    iconURL: interaction.client.user.displayAvatarURL()
+                }
+            })
+            res.edit({ embeds: [emd] })
+            return
+        }
+
+        // validar valor mínimo (R$0,01)
+        if (typeof value !== 'number' || value < 0.01) {
+            let emd = createEmbed({
+                description: `**${constants.emojis.cancel} O valor mínimo permitido é R$0,01. Informe um valor válido.**`,
+                color: constants.colors.danger,
+                timestamp: new Date(),
+                footer: {
+                    text: `Gerenciamento Lojas`,
+                    iconURL: interaction.client.user.displayAvatarURL()
+                }
+            })
+            res.edit({ embeds: [emd] })
+            return
+        }
 
         const loja = await db.store.find({
             nameid: idloja
