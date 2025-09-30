@@ -1,8 +1,8 @@
 import { db } from "#database";
+import { constructor } from "#functions";
+import { parseEmoji } from "#functions";
 import { createEmbed, createMediaGallery, createRow } from "@magicyan/discord";
 import { ApplicationCommandOptionType, StringSelectMenuBuilder } from "discord.js";
-import { constructor } from "functions/constructor.js";
-import parseEmoji from "functions/parseEmoji.js";
 import commad from "../commad.js";
 
 commad.subcommand({
