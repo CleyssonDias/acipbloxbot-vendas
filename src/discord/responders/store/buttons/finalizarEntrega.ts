@@ -43,7 +43,14 @@ createResponder({
                 const clientGuild = interaction.client.guilds.cache.get(order.clientGuildId as string);
                 const clientChannel = clientGuild?.channels.cache.get(order.clientChannelId as string);
                 if (clientChannel && 'send' in clientChannel && typeof (clientChannel as any).send === 'function') {
-                    await (clientChannel as any).send({ content: `O moderador finalizou seu pedido. Por favor, avalie nosso serviço. Obrigado!` });
+                    const embed = createEmbed({
+                        title: `${constants.emojis.ok} Pedido finalizado!`,
+                        description: `# Seu pedido foi finalizado com sucesso!\n\nMuito obrigado por comprar conosco! Se possível, avalie nosso atendimento deixando seu feedback.\n\nSe precisar de algo, estamos à disposição!`,
+                        color: constants.colors.success,
+                        timestamp: new Date(),
+                        footer: { text: 'Equipe AcipBlox', iconURL: interaction.client.user.displayAvatarURL() }
+                    });
+                    await (clientChannel as any).send({ embeds: [embed] });
                     // atualizar status no DB
                     try { await updateOrder(orderId, { status: 'finished' }); } catch (e) { console.error('[finalizarEntrega] erro atualizar ordem', e); }
                     setTimeout(async () => {

@@ -44,36 +44,32 @@ createEvent({
                 console.error("[relayToClient] erro ao restaurar canal de ausentes para entrega", e);
             }
 
-            // se autor é o moderador -> enviar para o cliente
+
+
+            // Só encaminha mensagem do moderador para o cliente
+            if (!order.moderatorId) return;
+
             if (message.author.id === order.moderatorId) {
                 if (!order.clientGuildId || !order.clientChannelId) return;
                 const clientGuild = message.client.guilds.cache.get(order.clientGuildId);
                 if (!clientGuild) return;
                 const clientChannel = clientGuild.channels.cache.get(order.clientChannelId);
                 if (!clientChannel) return;
-                const attachments = Array.from(message.attachments.values()).map((a) => ({ name: a.name || "file", url: a.url }));
+                const files = Array.from(message.attachments.values());
                 const embed = createEmbed({
-                    title: "Mensagem do moderador",
+                    author: {
+                        name: message.author.tag,
+                        iconURL: message.author.displayAvatarURL()
+                    },
+                    title: `Mensagem do Moderador`,
                     description: message.content || "*(sem texto)*",
                     color: constants.colors.secondary,
                     timestamp: new Date(),
-                    footer: { text: `Moderador: ${message.author.tag} • via bot`, iconURL: message.author.displayAvatarURL() },
+                    footer: { text: `ID do Pedido: ${orderId}` },
                 });
-                await (clientChannel as any).send({ content: `<@${order.clientUserId || ''}>`, embeds: [embed], files: attachments });
-                return;
-            }
-
-            // se autor não é moderador e mensagem veio do client guild, encaminhar para delivery
-            if (message.guild.id === order.clientGuildId) {
-                const attachments = Array.from(message.attachments.values()).map((a) => ({ name: a.name || "file", url: a.url }));
-                const embed = createEmbed({
-                    title: "Mensagem do cliente",
-                    description: message.content || "*(sem texto)*",
-                    color: constants.colors.primary,
-                    timestamp: new Date(),
-                    footer: { text: `Cliente: ${message.author.tag} • via bot`, iconURL: message.author.displayAvatarURL() },
-                });
-                await (targetChannel as any).send({ content: order.moderatorId ? `<@${order.moderatorId}>` : undefined, embeds: [embed], files: attachments });
+                // Mencionar o cliente
+                const mention = order.clientUserId ? `<@${order.clientUserId}>` : undefined;
+                await (clientChannel as any).send({ content: mention, embeds: [embed], files });
                 return;
             }
 
